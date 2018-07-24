@@ -2,6 +2,11 @@ import db
 
 cur = db.cur
 
+UPDATE_TYPE = {
+    'INSERT': 'insert',
+    'UPDATE': 'update'
+}
+
 def get_params_by_fias_item(fias_item):
     return {
         'aoid': fias_item.get('AOID'),
@@ -51,8 +56,10 @@ def update_addobj(fias_item):
         cur.execute(""" 
         INSERT INTO addrobj(""" + ",".join(formatted_item.keys()) + """)
         VALUES (""" + ",".join(map(lambda x: '%(' + x + ')s' ,formatted_item.keys())) + """)""", formatted_item)
+        return UPDATE_TYPE['INSERT']
     else:
         cur.execute(""" 
         UPDATE addrobj SET (""" + ",".join(formatted_item.keys()) + """) 
         = (""" + ",".join(map(lambda x: '%(' + x + ')s' ,formatted_item.keys())) + """)
         WHERE aoid = %(aoid)s""", formatted_item)
+        return UPDATE_TYPE['UPDATE']
