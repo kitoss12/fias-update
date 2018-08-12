@@ -1,7 +1,3 @@
-import db
-
-cur = db.cur
-
 UPDATE_TYPE = {
     'INSERT': 'insert',
     'UPDATE': 'update'
@@ -47,19 +43,38 @@ def get_params_by_fias_item(fias_item):
         'divtype': fias_item.get('DIVTYPE')
     }
 
-def update_addobj(fias_item):
+def get_params_by_socrbase_item(socrbase_item):
+    return {
+        'socrname': socrbase_item.get('SOCRNAME'),
+        'scname': socrbase_item.get('SCNAME'),
+        'kod_t_st': socrbase_item.get('KOD_T_ST'),
+        'level': socrbase_item.get('LEVEL')
+    }
+
+def update_addobj(cursor, fias_item):
     formatted_item = get_params_by_fias_item(fias_item)
     aoid = formatted_item['aoid']
-    cur.execute("SELECT * FROM addrobj WHERE aoid = %s", (aoid,))
-    res = cur.fetchone()
+    cursor.execute("SELECT * FROM addrobj WHERE aoid = %s", (aoid,))
+    res = cursor.fetchone()
     if res == None:
-        cur.execute(""" 
+        cursor.execute(""" 
         INSERT INTO addrobj(""" + ",".join(formatted_item.keys()) + """)
         VALUES (""" + ",".join(map(lambda x: '%(' + x + ')s' ,formatted_item.keys())) + """)""", formatted_item)
         return UPDATE_TYPE['INSERT']
     else:
-        cur.execute(""" 
+        cursor.execute(""" 
         UPDATE addrobj SET (""" + ",".join(formatted_item.keys()) + """) 
         = (""" + ",".join(map(lambda x: '%(' + x + ')s' ,formatted_item.keys())) + """)
         WHERE aoid = %(aoid)s""", formatted_item)
         return UPDATE_TYPE['UPDATE']
+
+def delete_socrbase_items(cursor):
+    cursor.execute('DELETE FROM socrbase RETURNING *')
+    return len(cursor.fetchall())
+
+def add_socrbase_item(cursor, item):
+    formatted_item = get_params_by_socrbase_item(item)
+    cursor.execute(""" 
+        INSERT INTO socrbase(""" + ",".join(formatted_item.keys()) + """)
+        VALUES (""" + ",".join(map(lambda x: '%(' + x + ')s' ,formatted_item.keys())) + """)""", formatted_item)
+    

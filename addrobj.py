@@ -1,10 +1,17 @@
 import sys
 import xml.etree.ElementTree as ET
-import arguments
+import addrobj_arguments as arguments
 import fias
 import db
 
 source = arguments.args.source
+args = arguments.args
+
+connect = db.get_connect(
+    dbname = args.n, host = args.a, user = args.u, password = args.s, port = args.p
+)
+
+cursor = connect.cursor()    
 
 count = 0
 update_count = 0
@@ -14,7 +21,7 @@ for event, elem in ET.iterparse(source):
     if elem.tag == "Object":
         count = count + 1
         fias_item = elem.attrib
-        update_type = fias.update_addobj(fias_item)
+        update_type = fias.update_addobj(cursor, fias_item)
         if update_type == fias.UPDATE_TYPE['INSERT']:
             insert_count = insert_count + 1
         elif update_type == fias.UPDATE_TYPE['UPDATE']:
@@ -23,6 +30,6 @@ for event, elem in ET.iterparse(source):
         sys.stdout.flush()
         elem.clear()
 
-db.conn.commit()
-db.cur.close()
-db.conn.close()
+connect.commit()
+cursor.close()
+connect.close()
