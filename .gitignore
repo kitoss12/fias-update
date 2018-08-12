@@ -2,3 +2,4 @@ __pycache__/*
 .vscode/*
 AS_ADDROBJ_*.XML
 AS_SOCRBASE_*.XML
+_updates/*

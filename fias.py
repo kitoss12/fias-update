@@ -1,6 +1,7 @@
 UPDATE_TYPE = {
     'INSERT': 'insert',
-    'UPDATE': 'update'
+    'UPDATE': 'update',
+    'SKIP': 'skip'
 }
 
 def get_params_by_fias_item(fias_item):
@@ -57,6 +58,9 @@ def update_addobj(cursor, fias_item):
     cursor.execute("SELECT * FROM addrobj WHERE aoid = %s", (aoid,))
     res = cursor.fetchone()
     if res == None:
+        if formatted_item["livestatus"] != "1" and formatted_item["currstatus"] != "0":
+            return UPDATE_TYPE['SKIP']
+
         cursor.execute(""" 
         INSERT INTO addrobj(""" + ",".join(formatted_item.keys()) + """)
         VALUES (""" + ",".join(map(lambda x: '%(' + x + ')s' ,formatted_item.keys())) + """)""", formatted_item)
