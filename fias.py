@@ -68,6 +68,10 @@ def update_addobj(cursor, fias_item):
         WHERE aoid = %(aoid)s""", formatted_item)
         return UPDATE_TYPE['UPDATE']
 
+def delete_historical_addobj_items(cursor):
+    cursor.execute("DELETE FROM addrobj WHERE livestatus != 1 AND currstatus != 0 RETURNING *")
+    return len(cursor.fetchall())
+
 def delete_socrbase_items(cursor):
     cursor.execute('DELETE FROM socrbase RETURNING *')
     return len(cursor.fetchall())
