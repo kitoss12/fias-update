@@ -21,6 +21,13 @@ python .\addrobj.py .\AS_ADDROBJ_20171117_392c8147-ac94-4308-9fe3-15d486169ec2.X
 python .\addrobj.py --help
 ```
 
+### Удаление технологически удаленных данных
+
+При наличии файла AS_DEL_ADDROBJ*.xml требуется запускать скрипт:
+```
+python .\del_addrobj.py .\AS_DEL_ADDROBJ_20171228_64fe4ec0-2e67-41b9-8335-b139a665b173.XML -n fias -a 192.168.1.1 -u admin -s mypassword
+```
+
 ## Обновление таблицы socrbase
 
 Пример файла обновления:

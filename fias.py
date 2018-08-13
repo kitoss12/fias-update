@@ -76,6 +76,9 @@ def delete_historical_addobj_items(cursor):
     cursor.execute("DELETE FROM addrobj WHERE livestatus != 1 AND currstatus != 0 RETURNING *")
     return len(cursor.fetchall())
 
+def delete_addrobj_item_by_aoid(cursor, aoid):
+    cursor.execute("DELETE FROM addrobj WHERE aoid = %s", (aoid,))    
+
 def delete_socrbase_items(cursor):
     cursor.execute('DELETE FROM socrbase RETURNING *')
     return len(cursor.fetchall())
